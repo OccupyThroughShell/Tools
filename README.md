@@ -6,5 +6,5 @@
 
 
 
-Tools
+Tools				
 hashtime-ulate.py | used to calculate how long it'll take to crack a hash
