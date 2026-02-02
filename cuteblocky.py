@@ -138,7 +138,7 @@ def decompile_class():
 
 decompile_class()
 
-f
+
 # Exploitation of Sudo privileges of the user Notch(found username while enumerating website) via ssh to retrieve logins
 while True:
     answer = input(Fore.RED + "\nDo you want to continue with exploitation and priviledge esculation? (yes/no): ").lower()
@@ -161,6 +161,7 @@ while True:
         break
     else:
         print("Please enter yes or no.")
+
 
 
 
