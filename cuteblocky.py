@@ -4,7 +4,6 @@ import sys
 import os
 import subprocess
 from colorama import Fore, Style, init
-import paramiko
 from fabric import Connection, Config
 import getpass
 
@@ -162,4 +161,5 @@ while True:
         break
     else:
         print("Please enter yes or no.")
+
 
