@@ -141,7 +141,7 @@ decompile_class()
 
 # Exploitation of Sudo privileges of the user Notch(found username while enumerating website) via ssh to retrieve logins
 while True:
-    answer = input(Fore.RED + "\nDo you want to continue with exploitation and priviledge esculation? (yes/no): ").lower()
+    answer = input(Fore.RED + "\nDo you want to continue with exploitation and priviledge esculation? (yes/no): ")
 
     if answer == "yes":
         print(Fore.BLUE + "[*] Exploitating Sudo Privileges of User Notch and Grabbing Flags!\n")
@@ -161,6 +161,7 @@ while True:
         break
     else:
         print("Please enter yes or no.")
+
 
 
 
