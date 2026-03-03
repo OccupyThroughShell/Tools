@@ -66,7 +66,7 @@ def inject_dll(pid, dll_path):
         dll_len, 
         byref(written)
     )
-#creating a remote thread to call to LoadLibrary in
+#creating a remote thread to call to LoadLibrary
     h_kernel32 = kernel32.GetModuleHandleA(b"kernel32.dll")
     h_loadlib = kernel32.GetProcAddress(h_kernel32, b"LoadLibraryA")
 
@@ -100,3 +100,4 @@ while True:
          sys.exit(0)
     else:
          print("[>] Please enter 'exit' to stop")    
+
