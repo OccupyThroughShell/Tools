@@ -83,7 +83,7 @@ def inject_dll(pid, dll_path):
         print("[!] Failed to create remote thread")
         return False
 
-    print(f"[+] DLL injected successfully into PID {pid}")
+    print(f"[>] DLL injected successfully into PID {pid}")
     return True
 if __name__ == "__main__":
     if os.path.exists(dll_path):
@@ -99,10 +99,4 @@ while True:
          break
          sys.exit(0)
     else:
-         print("[>] Please enter 'exit' to stop")
-
-if __name__ == "__main__":
-    if os.path.exists(dll_path):
-        inject_dll(pid, dll_path)
-    else:
-        print("[!] DLL file not found")     
+         print("[>] Please enter 'exit' to stop")    
