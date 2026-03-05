@@ -42,7 +42,7 @@ dll_path = input("[>] Please provide the path to your DLL!!!\n[>] Format Example
 #You can change the encoding here. For example swap to ASCII
 encoding = 'utf-8'
 
-#DLL loaded as a ctype for easier payload delivery
+#DLL loaded as a c character array for easier payload delivery
 buffer = ctypes.create_string_buffer(dll_path.encode(encoding))
 
 if pid is not None:
@@ -116,6 +116,7 @@ while True:
          sys.exit(0)
     else:
          print("[>] Please enter 'exit' to stop")
+
 
 
 
